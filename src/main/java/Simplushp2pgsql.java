@@ -119,18 +119,18 @@ public class Simplushp2pgsql {
 	 * @param creds
 	 */
 	public static void writeShapetoDB(Path dirPath, String run, Credential creds) {
-		String imu = "" + dirPath.getFileName();
+		//String imu = "" + dirPath.getFileName();
 		List<String> dirs = new ArrayList<>();
 		//boolean tableExists = !creds.createTable;
-		try (DirectoryStream<Path> stream = Files.newDirectoryStream(dirPath, "*.shp")) {
+		try (DirectoryStream<Path> stream = Files.newDirectoryStream(dirPath, "simul_*.shp")) {
 			for (Path p : stream) {
 				dirs.add(p.toString());
 				IPopulation<IFeature> shapes = ShapefileReader.read(p.toString());
 				for (IFeature f : shapes) {
 					DefaultFeature df = (DefaultFeature) f;
-					AttributeManager.addAttribute(df, "directory", imu, "String");
+					//AttributeManager.addAttribute(df, "idblock", imu, "String");
 					AttributeManager.addAttribute(df, "run", run, "String");
-					// System.out.println(df.getGeom());
+					//System.out.println(df);
 				}
 				// System.out.println(p + " -> " + imu + " : " + shapes.size() +
 				// " features");
@@ -156,7 +156,11 @@ public class Simplushp2pgsql {
 	public static void main(String[] args) {
 		Logger logger = Logger.getLogger(fr.ign.cogit.geoxygene.util.conversion.Reader.class.getName());
 		logger.setLevel(Level.OFF);
-
+		try {
+			Class.forName("org.postgresql.Driver");
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 		PostgisManager.NAME_COLUMN_GEOM = "geom";
 		PostgisManager.setLoggerLevel(Level.OFF);
 		if (args.length != 2) {
@@ -174,10 +178,11 @@ public class Simplushp2pgsql {
 			System.out.println("incorrect format for run : it should be as YYMMDD like 170518");
 			System.exit(0);
 		}
-
+		Simplushp2pgsql.tableExists = true;
 		List<Path> ll = getSubdirs(conf.shapesDir);
 		long beg = System.currentTimeMillis();
 		long end = 0;
+		System.out.println("in dir : " +conf.shapesDir);
 		System.out.println("Number of IMUs (dirs) to write : " + ll.size());
 		int i = 0;
 		for (Path dir : ll) {
