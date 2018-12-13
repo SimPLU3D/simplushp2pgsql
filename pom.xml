@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>fr.ign.simplu3d.tools</groupId>
 	<artifactId>simplushp2pgsql</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.11</version>
 	<name>simplushp2pgsql</name>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
